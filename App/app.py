@@ -9,6 +9,7 @@ expected_columns = joblib.load("Models/heart_disease_features.pkl")
 
 st.title("Heart Stroke Prediction by Dipesh")
 st.markdown("Enter the following details to predict the risk of heart stroke:")
+# st.write(expected_columns)
 
 # Collect user input
 age = st.slider("Age", 18, 100, 40)
@@ -35,11 +36,12 @@ if st.button("Predict"):
     raw_input['MaxHR'] = max_hr
     raw_input['Oldpeak'] = oldpeak
 
-    raw_input['Sex_' + sex] = 1
+    raw_input["Sex_M"] = 1 if sex == "M" else 0
     raw_input['ChestPainType_' + chest_pain] = 1
     raw_input['RestingECG_' + resting_ecg] = 1
     raw_input['ExerciseAngina_' + exercise_angina] = 1
     raw_input['ST_Slope_' + st_slope] = 1
+    raw_input = raw_input.reindex(columns=expected_columns, fill_value=0)
 
     scaled_input = scaler.transform(raw_input)
 
