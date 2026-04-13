@@ -26,40 +26,26 @@ st_slope = st.selectbox("ST Slope", ["Up", "Flat", "Down"])
 # When Predict is clicked
 if st.button("Predict"):
 
-    # Create a raw input dictionary
-    raw_input = {
-        'Age': age,
-        'RestingBP': resting_bp,
-        'Cholesterol': cholesterol,
-        'FastingBS': fasting_bs,
-        'MaxHR': max_hr,
-        'Oldpeak': oldpeak,
-        'Sex_' + sex: 1,
-        'ChestPainType_' + chest_pain: 1,
-        'RestingECG_' + resting_ecg: 1,
-        'ExerciseAngina_' + exercise_angina: 1,
-        'ST_Slope_' + st_slope: 1
-    }
+    raw_input = pd.DataFrame(0, columns=expected_columns, index=[0])
 
-    # Create input dataframe
-    input_df = pd.DataFrame([raw_input])
+    raw_input['Age'] = age
+    raw_input['RestingBP'] = resting_bp
+    raw_input['Cholesterol'] = cholesterol
+    raw_input['FastingBS'] = fasting_bs
+    raw_input['MaxHR'] = max_hr
+    raw_input['Oldpeak'] = oldpeak
 
-    # Fill in missing columns with 0s
-    for col in expected_columns:
-        if col not in input_df.columns:
-            input_df[col] = 0
+    raw_input['Sex_' + sex] = 1
+    raw_input['ChestPainType_' + chest_pain] = 1
+    raw_input['RestingECG_' + resting_ecg] = 1
+    raw_input['ExerciseAngina_' + exercise_angina] = 1
+    raw_input['ST_Slope_' + st_slope] = 1
 
-    # Reorder columns
-    input_df = input_df[expected_columns]
+    scaled_input = scaler.transform(raw_input)
 
-    # Scale the input
-    scaled_input = scaler.transform(input_df)
-
-    # Make prediction
     prediction = model.predict(scaled_input)[0]
 
-    # Show result
     if prediction == 1:
-        st.error("⚠️ High Risk of Heart Disease, please conclsult a doctor immediately!")
+        st.error("⚠️ High Risk of Heart Disease, please consult a doctor immediately!")
     else:
         st.success("✅ Low Risk of Heart Disease, but maintain a healthy lifestyle!")
